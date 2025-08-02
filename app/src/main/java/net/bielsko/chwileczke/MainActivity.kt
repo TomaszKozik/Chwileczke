@@ -5,10 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -81,8 +80,7 @@ fun MessageScreen() {
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             stringResource(id = R.string.message_out_of_work_description),
-            color = colorResource(id = R.color.gray_text),
-            style = MaterialTheme.typography.body2
+            color = colorResource(id = R.color.gray_text)
         )
 
         // Holiday break message
@@ -98,15 +96,15 @@ fun MessageScreen() {
             onValueChange = { mutableMessageHolidayDefaultText = it })
         Text(
             stringResource(id = R.string.message_holiday_description),
-            color = colorResource(id = R.color.gray_text),
-            style = MaterialTheme.typography.body2
+            color = colorResource(id = R.color.gray_text)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         if (!isHolidayBreakButtonClicked) {
             Button(
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = colorResource(id = R.color.primary_blue)
+                    containerColor = colorResource(id = R.color.primary_blue),
+                    contentColor = colorResource(id = R.color.white)
                 ),
                 onClick = { isHolidayBreakButtonClicked = true }) {
                 Text(
@@ -126,7 +124,8 @@ fun MessageScreen() {
             Spacer(modifier = Modifier.height(8.dp))
             Button(
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = colorResource(id = R.color.primary_blue)
+                    containerColor = colorResource(id = R.color.primary_blue),
+                    contentColor = colorResource(id = R.color.white)
                 ),
                 onClick = { isHolidayBreakButtonClicked = false }) {
                 Text(
@@ -176,11 +175,11 @@ fun MessageScreen() {
                 enabled = isAddLinkEnabled,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = colorResource(id = R.color.primary_blue),
-                    unfocusedBorderColor = colorResource(id = R.color.gray_text),
-                    focusedLabelColor = colorResource(id = R.color.primary_blue),
-                    unfocusedLabelColor = colorResource(id = R.color.gray_text)
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = colorResource(id = R.color.white),
+                    unfocusedContainerColor = colorResource(id = R.color.white),
+                    focusedIndicatorColor = colorResource(id = R.color.primary_blue),
+                    unfocusedIndicatorColor = colorResource(id = R.color.gray_text)
                 )
             )
 
@@ -199,11 +198,11 @@ fun MessageScreen() {
                 enabled = isAddLinkEnabled,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = colorResource(id = R.color.primary_blue),
-                    unfocusedBorderColor = colorResource(id = R.color.gray_text),
-                    focusedLabelColor = colorResource(id = R.color.primary_blue),
-                    unfocusedLabelColor = colorResource(id = R.color.gray_text)
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = colorResource(id = R.color.white),
+                    unfocusedContainerColor = colorResource(id = R.color.white),
+                    focusedIndicatorColor = colorResource(id = R.color.primary_blue),
+                    unfocusedIndicatorColor = colorResource(id = R.color.gray_text)
                 ),
                 isError = isAddLinkEnabled && !isValidUrl(linkUrl)
 
@@ -277,12 +276,13 @@ fun DropdownMenuWithLabel(options: List<String>, selected: String, onSelect: (St
         )
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->
-                DropdownMenuItem(onClick = {
-                    onSelect(option)
-                    expanded = false
-                }) {
-                    Text(option)
-                }
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onSelect(option)
+                        expanded = false
+                    }
+                )
             }
         }
     }
