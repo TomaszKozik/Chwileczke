@@ -275,6 +275,7 @@ fun WeeklySummary(schedule: List<WorkingHoursState>) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun parseTime(time: String): LocalTime? = try {
     LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"))
 } catch (e: Exception) {
