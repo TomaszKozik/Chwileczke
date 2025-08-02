@@ -26,58 +26,17 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import net.bielsko.chwileczke.ui.views.MainView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainScreen()
+            MainView()
         }
     }
 }
 
-@SuppressLint("ResourceAsColor")
-@Composable
-fun MainScreen() {
-    var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf(R.string.tab_messages, R.string.tab_settings)
-
-    Scaffold(
-        topBar = {
-            AppHeader()
-        },
-        content = { padding ->
-            Column(modifier = Modifier.padding(padding)) {
-                TabRow(
-                    selectedTabIndex = selectedTab,
-                    backgroundColor = colorResource(id = R.color.white),
-                    contentColor = colorResource(id = R.color.primary_blue)
-                ) {
-                    tabs.forEachIndexed { index, titleResId ->
-                        val title = stringResource(id = titleResId)
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = {
-                                Text(
-                                    text = title,
-                                    modifier = Modifier.semantics {
-                                        contentDescription = title
-                                    }
-                                )
-                            }
-                        )
-                    }
-
-                }
-                when (selectedTab) {
-                    0 -> MessageScreen()
-                    1 -> SettingsScreen()
-                }
-            }
-        }
-    )
-}
 
 // Messages Screen
 @SuppressLint("ResourceAsColor")
@@ -410,39 +369,4 @@ fun DzienGodzinyPracy(dzien: String) {
 
 fun isValidUrl(url: String): Boolean {
     return url.startsWith("http://") || url.startsWith("https://")
-}
-
-@Composable
-fun AppHeader() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.primary_blue))
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_logo),
-            contentDescription = "Ikona",
-            tint = colorResource(id = R.color.white),
-            modifier = Modifier
-                .size(32.dp)
-                .padding(end = 8.dp)
-                .semantics {
-                    contentDescription = "Logo Chwileczkę"
-                }
-        )
-        Text(
-            text = "Chwileczkę",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.white),
-            modifier = Modifier.semantics {
-                heading()
-                this.contentDescription = "Chwileczkę"
-            }
-        )
-
-    }
 }
