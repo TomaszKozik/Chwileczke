@@ -8,6 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -80,6 +82,7 @@ fun WorkingHoursForm() {
     WeeklySummary(schedule)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkingHours(
     state: WorkingHoursState,
@@ -143,34 +146,73 @@ fun WorkingHours(
                     modifier = Modifier.padding(end = 8.dp)
                 )
                 if (!wholeDay) {
+                    var fromInput by remember { mutableStateOf(from) }
+                    var toInput by remember { mutableStateOf(to) }
                     OutlinedTextField(
-                        value = from,
+                        value = fromInput,
                         onValueChange = { newValue ->
                             if (newValue.length <= 5 && newValue.all { it.isDigit() || it == ':' }) {
-                                from = newValue
-                                onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                                fromInput = newValue
                             }
                         },
-                        label = { Text(stringResource(id = R.string.from)) },
-                        singleLine = true,
                         modifier = Modifier
                             .width(80.dp)
                             .height(55.dp)
+                            .onFocusChanged { focusState: FocusState ->
+                                if (!focusState.isFocused) {
+                                    // Utracono fokus, waliduj i ewentualnie resetuj
+                                    if (isValidTimeFormat(fromInput)) {
+                                        val parsedFrom = parseTime(fromInput)
+                                        val parsedTo = parseTime(toInput)
+                                        if (parsedFrom != null && parsedTo != null && parsedFrom <= parsedTo) {
+                                            from = fromInput
+                                        } else {
+                                            // jeśli zła kolejność, reset do domyślnej lub ustaw na to
+                                            fromInput = "08:00"
+                                            from = fromInput
+                                        }
+                                    } else {
+                                        fromInput = "08:00"
+                                        from = fromInput
+                                    }
+                                    onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                                }
+                            },
+                        label = { Text(stringResource(id = R.string.from)) },
+                        singleLine = true
                     )
                     Text("–", modifier = Modifier.padding(horizontal = 4.dp))
                     OutlinedTextField(
-                        value = to,
+                        value = toInput,
                         onValueChange = { newValue ->
                             if (newValue.length <= 5 && newValue.all { it.isDigit() || it == ':' }) {
-                                to = newValue
-                                onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                                toInput = newValue
                             }
                         },
-                        label = { Text(stringResource(id = R.string.to)) },
-                        singleLine = true,
                         modifier = Modifier
                             .width(80.dp)
                             .height(55.dp)
+                            .onFocusChanged { focusState ->
+                                if (!focusState.isFocused) {
+                                    if (isValidTimeFormat(toInput)) {
+                                        val parsedFrom = parseTime(fromInput)
+                                        val parsedTo = parseTime(toInput)
+                                        if (parsedFrom != null && parsedTo != null && parsedTo >= parsedFrom) {
+                                            to = toInput
+                                        } else {
+                                            // jeśli zła kolejność, reset do domyślnej lub ustaw na from
+                                            toInput = "16:00"
+                                            to = toInput
+                                        }
+                                    } else {
+                                        toInput = "16:00"
+                                        to = toInput
+                                    }
+                                    onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                                }
+                            },
+                        label = { Text(stringResource(id = R.string.to)) },
+                        singleLine = true
                     )
                 }
             }
@@ -233,4 +275,8 @@ fun WeeklySummary(schedule: List<WorkingHoursState>) {
     }
 }
 
-
+fun parseTime(time: String): LocalTime? = try {
+    LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"))
+} catch (e: Exception) {
+    null
+}
