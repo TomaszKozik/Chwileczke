@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material3.OutlinedTextField
@@ -19,13 +18,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import net.bielsko.chwileczke.ui.fields.MultiLineTextField
 import net.bielsko.chwileczke.ui.views.MainView
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +31,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 // Messages Screen
 @SuppressLint("ResourceAsColor")
@@ -222,42 +216,6 @@ fun MessageScreen() {
         }
     }
 }
-
-@Composable
-fun MultiLineTextField(
-    value: String,
-    label: @Composable (() -> Unit)? = null,
-    onValueChange: (String) -> Unit,
-    enabled: Boolean = true,
-    maxLinesAllowed: Int = 12,
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = colorResource(id = R.color.primary_blue),
-        unfocusedBorderColor = colorResource(id = R.color.gray_text),
-        focusedLabelColor = colorResource(id = R.color.primary_blue),
-        unfocusedLabelColor = colorResource(id = R.color.gray_text)
-    )
-) {
-    OutlinedTextField(
-        value = value,
-        label = label,
-        onValueChange = { newValue ->
-            val lines = newValue.lines()
-            if (lines.size <= maxLinesAllowed) {
-                onValueChange(newValue)
-            } else {
-                // Obcinamy do maxLinesAllowed linii
-                onValueChange(lines.take(maxLinesAllowed).joinToString("\n"))
-            }
-        },
-        colors = colors,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp),
-        enabled = enabled,
-        maxLines = maxLinesAllowed
-    )
-}
-
 
 // Ustawienia
 @Composable
