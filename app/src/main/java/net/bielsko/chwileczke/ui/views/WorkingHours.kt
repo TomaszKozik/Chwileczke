@@ -1,21 +1,10 @@
 package net.bielsko.chwileczke.ui.views
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -23,15 +12,85 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.bielsko.chwileczke.R
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.util.*
+
+data class WorkingHoursState(
+    val day: Int,
+    val opened: Boolean = true,
+    val wholeDay: Boolean = false,
+    val from: String = "08:00",
+    val to: String = "16:00"
+)
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun isValidTimeFormat(time: String): Boolean {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    return try {
+        val parsed = LocalTime.parse(time, formatter)
+        // dodatkowo możesz wymusić zakres jeśli chcesz, np. od 00:00 do 23:59
+        true
+    } catch (e: DateTimeParseException) {
+        false
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun WorkingHoursForm() {
+    val days = listOf(
+        R.string.monday,
+        R.string.tuesday,
+        R.string.wednesday,
+        R.string.thursday,
+        R.string.friday,
+        R.string.saturday,
+        R.string.sunday
+    )
+
+    val schedule = remember {
+        mutableStateListOf<WorkingHoursState>().apply {
+            days.forEach { day ->
+                add(WorkingHoursState(day = day, opened = true))
+            }
+        }
+    }
+
+    Text(
+        stringResource(id = R.string.working_hours),
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+
+    schedule.forEachIndexed { index, state ->
+        WorkingHours(
+            state = state,
+            onChange = { updated -> schedule[index] = updated }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    WeeklyMessage(schedule)
+    WeeklySummary(schedule)
+}
 
 @Composable
-fun WorkingHours(day: String) {
-    var from by remember { mutableStateOf("08:00") }
-    var to by remember { mutableStateOf("16:00") }
-    var wholeDay by remember { mutableStateOf(false) }
-    var openedInDay by remember { mutableStateOf(true) }
+fun WorkingHours(
+    state: WorkingHoursState,
+    onChange: (WorkingHoursState) -> Unit
+) {
+    var opened by remember { mutableStateOf(state.opened) }
+    var wholeDay by remember { mutableStateOf(state.wholeDay) }
+    var from by remember { mutableStateOf(state.from) }
+    var to by remember { mutableStateOf(state.to) }
+
+    val day = stringResource(id = state.day)
     val primaryBlue = colorResource(id = R.color.primary_blue)
 
     Column(
@@ -48,70 +107,130 @@ fun WorkingHours(day: String) {
                 )
             }
     ) {
-        // czy otwarte
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
-                checked = openedInDay,
-                onCheckedChange = { openedInDay = it },
+                checked = opened,
+                onCheckedChange = {
+                    opened = it
+                    onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                },
                 colors = CheckboxDefaults.colors(
-                    checkedColor = colorResource(id = R.color.primary_blue),
+                    checkedColor = primaryBlue,
                     uncheckedColor = colorResource(id = R.color.gray_text),
                     checkmarkColor = Color.White
                 )
             )
-            Text("$day:")
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = if (!openedInDay) stringResource(id = R.string.closed) else stringResource(id = R.string.opened)
-            )
+            Text("$day: ${if (opened) stringResource(R.string.opened) else stringResource(R.string.closed)}")
         }
 
-        // W jakich godzinach czynne
-        if (openedInDay) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
+        if (opened) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = wholeDay,
-                    onCheckedChange = { wholeDay = it },
+                    onCheckedChange = {
+                        wholeDay = it
+                        onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                    },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = colorResource(id = R.color.primary_blue),
+                        checkedColor = primaryBlue,
                         uncheckedColor = colorResource(id = R.color.gray_text),
                         checkmarkColor = Color.White
                     )
                 )
                 Text(
-                    if (wholeDay) stringResource(id = R.string.whole_day) else stringResource(id = R.string.open_hours),
+                    if (wholeDay) stringResource(id = R.string.whole_day)
+                    else stringResource(id = R.string.open_hours),
                     modifier = Modifier.padding(end = 8.dp)
                 )
                 if (!wholeDay) {
-                    Spacer(modifier = Modifier.width(8.dp))
                     OutlinedTextField(
                         value = from,
-                        onValueChange = { from = it },
+                        onValueChange = { newValue ->
+                            if (newValue.length <= 5 && newValue.all { it.isDigit() || it == ':' }) {
+                                from = newValue
+                                onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                            }
+                        },
                         label = { Text(stringResource(id = R.string.from)) },
+                        singleLine = true,
                         modifier = Modifier
                             .width(80.dp)
-                            .height(55.dp),
-                        singleLine = true
+                            .height(55.dp)
                     )
                     Text("–", modifier = Modifier.padding(horizontal = 4.dp))
                     OutlinedTextField(
                         value = to,
-                        onValueChange = { to = it },
+                        onValueChange = { newValue ->
+                            if (newValue.length <= 5 && newValue.all { it.isDigit() || it == ':' }) {
+                                to = newValue
+                                onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                            }
+                        },
                         label = { Text(stringResource(id = R.string.to)) },
+                        singleLine = true,
                         modifier = Modifier
                             .width(80.dp)
-                            .height(55.dp),
-                        singleLine = true
+                            .height(55.dp)
                     )
                 }
             }
         }
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun WeeklyMessage(schedule: List<WorkingHoursState>) {
+    val now = LocalDate.now()
+    val currentTime = java.time.LocalTime.now()
+    val todayIndex = now.dayOfWeek.value // Poniedziałek = 1, Niedziela = 7
+
+    val todayState = schedule.getOrNull(todayIndex - 1)
+
+    if (todayState != null && todayState.opened) {
+        val showGreeting = todayState.wholeDay || runCatching {
+            val fromTime = java.time.LocalTime.parse(todayState.from)
+            val toTime = java.time.LocalTime.parse(todayState.to)
+            currentTime.isAfter(fromTime) && currentTime.isBefore(toTime)
+        }.getOrDefault(false)
+
+        if (showGreeting) {
+            Text(
+                text = "Dziś jest dobry dzień 😊",
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.primary_blue),
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
+    }
+}
+
+
+
+@Composable
+fun WeeklySummary(schedule: List<WorkingHoursState>) {
+    Column(modifier = Modifier.padding(top = 16.dp)) {
+        Text(
+            text = "Podsumowanie tygodnia:",
+            fontWeight = FontWeight.Bold,
+            color = colorResource(id = R.color.primary_blue),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        schedule.forEach { day ->
+            val dayName = stringResource(id = day.day)
+            val status = when {
+                !day.opened -> "Zamknięte"
+                day.wholeDay -> "Całodobowo"
+                else -> "${day.from} – ${day.to}"
+            }
+
+            Text(
+                text = "$dayName: $status",
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
+    }
+}
+
+

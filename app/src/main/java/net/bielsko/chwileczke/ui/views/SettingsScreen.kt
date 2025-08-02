@@ -1,6 +1,8 @@
 package net.bielsko.chwileczke.ui.views
 
 import DropdownMenuWithLabel
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.bielsko.chwileczke.R
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SettingsScreen() {
     Column(
@@ -28,23 +31,7 @@ fun SettingsScreen() {
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Text(
-            stringResource(id = R.string.working_hours),
-            fontWeight = FontWeight.Bold,
-        )
-        val days = listOf(
-            R.string.monday,
-            R.string.tuesday,
-            R.string.wednesday,
-            R.string.thursday,
-            R.string.friday,
-            R.string.saturday,
-            R.string.sunday)
-        days.forEach { dayResId ->
-            val day = stringResource(id = dayResId)
-            WorkingHours(day)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
+        WorkingHoursForm()
 
         // Telefon/SMS
         Text(
@@ -81,3 +68,4 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
+
