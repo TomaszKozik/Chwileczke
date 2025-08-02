@@ -1,7 +1,9 @@
 package net.bielsko.chwileczke.ui.fields
 
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -18,7 +20,8 @@ fun MultiLineTextField(
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,
     maxLinesAllowed: Int = 12,
-    colors: TextFieldColors? = null
+    colors: TextFieldColors? = null,
+    supportingText: @Composable (() -> Unit)? = null
 ) {
     val actualColors = colors ?: TextFieldDefaults.colors(
         focusedContainerColor = colorResource(id = R.color.white),
@@ -38,9 +41,10 @@ fun MultiLineTextField(
             }
         },
         colors = actualColors,
+        supportingText = supportingText,
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp),
+            .heightIn(min = 125.dp, max = 200.dp),
         enabled = enabled,
         maxLines = maxLinesAllowed
     )
