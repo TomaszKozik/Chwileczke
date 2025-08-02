@@ -17,8 +17,8 @@
     <string name="remove_holiday_break">Usuń przerwę w pracy</string>
     <string name="add_link_title">Link do wiadomości</string>
     <string name="add_link_button_description">"Włączenie tej opcji spowoduje, że będzie dołączany link do Twojej strony lub systemu rezerwacji na końcu każdej wiadomości</string>
-    <string name="add_link_text_description">Informacja o linku</string>
+    <string name="add_link_text_title">Informacja o linku</string>
     <string name="add_link_text_default">Zapraszam również do rezerwacji usług poprzez link:</string>
-    <string name="add_link_url_description">Adres do strony lub systemu rezerwacji</string>
+    <string name="add_link_url_title">Adres do strony lub systemu rezerwacji</string>
     <string name="add_link_url_error">Wprowadź poprawny link</string>
 </resources>
