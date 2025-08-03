@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,8 +30,8 @@ fun WorkingHoursForm(
 
     var opened by remember { mutableStateOf(workingHoursState.opened) }
     var wholeDay by remember { mutableStateOf(workingHoursState.wholeDay) }
-    var fromInput = remember { mutableStateOf(workingHoursState.from) }
-    var toInput = remember { mutableStateOf(workingHoursState.to) }
+    val fromInput = remember { mutableStateOf(workingHoursState.from) }
+    val toInput = remember { mutableStateOf(workingHoursState.to) }
 
     val isFromValid = isValidTimeFormat(fromInput.value)
     val isToValid = isValidTimeFormat(toInput.value)

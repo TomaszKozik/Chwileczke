@@ -42,33 +42,3 @@ fun SwitchBox(
         )
     }
 }
-
-
-@Composable
-fun DaySwitchBox(
-    day: String,
-    switchState: MutableState<Boolean>
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Switch(
-            checked = switchState.value,
-            onCheckedChange = { switchState.value = it },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = colorResource(id = R.color.link_blue),
-                uncheckedThumbColor = colorResource(id = R.color.gray_text),
-                checkedTrackColor = colorResource(id = R.color.primary_blue),
-                uncheckedTrackColor = colorResource(id = R.color.white))
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        if (!switchState.value) {
-            Text(
-                text = "Zamknięte",
-                color = colorResource(id = R.color.gray_text)
-            )
-        }
-    }
-}

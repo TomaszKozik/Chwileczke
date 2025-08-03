@@ -25,24 +25,24 @@ import net.bielsko.chwileczke.R
 import net.bielsko.chwileczke.ui.fields.DateTimePickerField
 import net.bielsko.chwileczke.ui.fields.Header1
 import net.bielsko.chwileczke.ui.fields.MyCheckbox
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun HolidayAvailabilitySection() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Odczyt z DataStore, collectAsState z wartościami początkowymi
     val savedChecked by HolidayPrefs.isHolidayChecked(context).collectAsState(initial = false)
     val savedDateFrom by HolidayPrefs.holidayDateFrom(context).collectAsState(initial = "")
     val savedDateTo by HolidayPrefs.holidayDateTo(context).collectAsState(initial = "")
 
-    // Lokalny stan sterowany przez Compose
     var checked by remember { mutableStateOf(false) }
     var dateFrom by remember { mutableStateOf("") }
     var dateTo by remember { mutableStateOf("") }
     var hasError by remember { mutableStateOf(false) }
 
-    // Synchronizacja przy zmianach w DataStore (np. przy pierwszym uruchomieniu)
     LaunchedEffect(savedChecked, savedDateFrom, savedDateTo) {
         checked = savedChecked
         dateFrom = savedDateFrom
@@ -50,6 +50,35 @@ fun HolidayAvailabilitySection() {
     }
     LaunchedEffect(dateFrom, dateTo, checked) {
         hasError = checked && (dateFrom.isBlank() || dateTo.isBlank())
+    }
+
+    val formatter = remember { SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()) }
+
+    // Parsowanie dat na timestamp (nullable)
+    val dateFromTimestamp = remember(dateFrom) {
+        try {
+            if (dateFrom.isNotBlank()) formatter.parse(dateFrom)?.time else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    val dateToTimestamp = remember(dateTo) {
+        try {
+            if (dateTo.isNotBlank()) formatter.parse(dateTo)?.time else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    // Timestamp na dzisiaj 00:00, żeby nie można było wybrać daty z przeszłości
+    val todayTimestamp = remember {
+        Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
     }
 
     Header1(stringResource(id = R.string.message_holiday_title))
@@ -70,7 +99,6 @@ fun HolidayAvailabilitySection() {
                 scope.launch {
                     HolidayPrefs.setHolidayChecked(context, newChecked)
                     if (!newChecked) {
-                        // Jeśli odznaczysz checkbox, czyścimy daty
                         HolidayPrefs.setHolidayDateFrom(context, "")
                         HolidayPrefs.setHolidayDateTo(context, "")
                     }
@@ -82,7 +110,6 @@ fun HolidayAvailabilitySection() {
 
         if (checked) {
             Column {
-                // Data przerwy od
                 DateTimePickerField(
                     label = "Data od",
                     value = dateFrom,
@@ -90,10 +117,11 @@ fun HolidayAvailabilitySection() {
                         dateFrom = it
                         scope.launch { HolidayPrefs.setHolidayDateFrom(context, it) }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    minDate = todayTimestamp,
+                    maxDate = dateToTimestamp  // Nie pozwalamy na datę "od" późniejszą niż "do"
                 )
 
-                // Data przerwy do
                 DateTimePickerField(
                     label = "Data do",
                     value = dateTo,
@@ -101,12 +129,13 @@ fun HolidayAvailabilitySection() {
                         dateTo = it
                         scope.launch { HolidayPrefs.setHolidayDateTo(context, it) }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    minDate = dateFromTimestamp ?: todayTimestamp  // "do" nie może być wcześniejsze niż "od" lub dziś
                 )
 
                 if (hasError) {
                     Text(
-                        text = stringResource(id = R.string.error_fill_dates), // Dodaj do strings.xml
+                        text = stringResource(id = R.string.error_fill_dates),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )

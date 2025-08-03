@@ -15,25 +15,25 @@ import net.bielsko.chwileczke.helpers.isValidTimeFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
 @Composable
 fun DateTimePickerField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    minDate: Long? = null,
+    maxDate: Long? = null
 ) {
     val context = LocalContext.current
     val calendar = remember { Calendar.getInstance() }
 
-    Box(modifier = modifier
-        .clickable {
+    Box(
+        modifier = modifier.clickable {
             val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                // Po dacie wybierzmy godzinę
                 val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
                     calendar.set(Calendar.HOUR_OF_DAY, hour)
                     calendar.set(Calendar.MINUTE, minute)
@@ -57,7 +57,10 @@ fun DateTimePickerField(
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            ).apply {
+                minDate?.let { datePicker.minDate = it }
+                maxDate?.let { datePicker.maxDate = it }
+            }.show()
         }
     ) {
         MyTextField(
@@ -66,7 +69,7 @@ fun DateTimePickerField(
             readOnly = true,
             labelText = label,
             modifier = Modifier.fillMaxWidth(),
-            enabled = false, // WAŻNE: wyłącza tap i wskazuje, że nie można pisać },
+            enabled = false,
         )
     }
 }
