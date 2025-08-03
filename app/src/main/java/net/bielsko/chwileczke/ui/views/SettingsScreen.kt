@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.bielsko.chwileczke.holidays.HolidayAvailabilitySection
 import net.bielsko.chwileczke.R
-import net.bielsko.chwileczke.Triggers
+import net.bielsko.chwileczke.triggers.Triggers
 import net.bielsko.chwileczke.ui.fields.Header1
 import net.bielsko.chwileczke.workingHours.WorkingHoursDisplay
 
@@ -36,16 +36,14 @@ fun SettingsScreen() {
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Header1(stringResource(id = R.string.message_holiday_title))
-        Text(
-            stringResource(id = R.string.add_holiday_break_description),
-            color = colorResource(id = R.color.gray_text)
-        )
         HolidayAvailabilitySection()
+
         Spacer(modifier = Modifier.height(16.dp))
+
         WorkingHoursDisplay()
 
-        Header1("Wyzwalacze")
         Triggers()
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

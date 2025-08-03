@@ -3,7 +3,6 @@ import androidx.compose.material3.*
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.colorResource
 import net.bielsko.chwileczke.R
 
@@ -12,7 +11,7 @@ import net.bielsko.chwileczke.R
 fun DropdownMenuWithLabel(
     label: String,
     options: List<String>,
-    selected: String,
+    selectedOption: String,
     onSelect: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -23,7 +22,7 @@ fun DropdownMenuWithLabel(
         modifier = Modifier.fillMaxWidth()
     ) {
         OutlinedTextField(
-            value = selected,
+            value = selectedOption,
             onValueChange = {},
             readOnly = true,
             label = {
@@ -34,7 +33,7 @@ fun DropdownMenuWithLabel(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(), // <<< TO JEST KLUCZOWE
+                .menuAnchor(),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
@@ -56,7 +55,7 @@ fun DropdownMenuWithLabel(
                     text = {
                         Text(
                             text = option,
-                            color = colorResource(id = R.color.gray_text) // Kolor tekstu
+                            color = colorResource(id = R.color.gray_text)
                         )
                     },
                     onClick = {
@@ -71,3 +70,4 @@ fun DropdownMenuWithLabel(
         }
     }
 }
+
