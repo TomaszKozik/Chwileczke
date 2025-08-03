@@ -50,4 +50,5 @@
     <string name="noname_contact">Nieznany kontakt</string>
     <string name="name_contact">Znany kontakt</string>
     <string name="choose">Wybierz</string>
+    <string name="error_fill_dates">Uzupełnij obie daty, aby funkcja działała!</string>
 </resources>

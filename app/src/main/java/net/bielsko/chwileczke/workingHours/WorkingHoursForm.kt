@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.bielsko.chwileczke.R
 import net.bielsko.chwileczke.helpers.isValidTimeFormat
-import net.bielsko.chwileczke.ui.fields.TextFieldBox
+import net.bielsko.chwileczke.ui.fields.MyTextField
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -95,8 +95,8 @@ fun WorkingHoursForm(
                     .fillMaxWidth()
                     .padding(8.dp)) {
                 if (!wholeDay) {
-                    TextFieldBox(
-                        title = stringResource(id = R.string.from),
+                    MyTextField(
+                        labelText = stringResource(id = R.string.from),
                         textState = fromInput,
                         errorText = when {
                             !isFromValid -> stringResource(R.string.error_incorrect_hour)
@@ -106,11 +106,15 @@ fun WorkingHoursForm(
                         validator = { isValidTimeFormat(it) && isOrderValid },
                         modifier = Modifier
                             .weight(1f)
-                            .height(80.dp)
+                            .height(80.dp),
+//                        value = value,
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false
                     )
                     Text("–", modifier = Modifier.padding(horizontal = 4.dp))
-                    TextFieldBox(
-                        title = stringResource(id = R.string.to),
+                    MyTextField(
+                        labelText = stringResource(id = R.string.to),
                         textState = toInput,
                         errorText = when {
                             !isToValid -> stringResource(R.string.error_incorrect_hour)
@@ -120,7 +124,11 @@ fun WorkingHoursForm(
                         validator = { isValidTimeFormat(it) && isOrderValid },
                         modifier = Modifier
                             .weight(1f)
-                            .height(80.dp)
+                            .height(80.dp),
+//                        value = value,
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false
                     )
 
                     // Aktualizujemy stan tylko jeśli oba czasy są poprawne

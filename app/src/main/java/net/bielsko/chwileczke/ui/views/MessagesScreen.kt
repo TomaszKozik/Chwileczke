@@ -9,26 +9,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.bielsko.chwileczke.R
 import net.bielsko.chwileczke.helpers.AddUrlToMessage
-import net.bielsko.chwileczke.ui.fields.Header1
 import net.bielsko.chwileczke.ui.fields.MessageBox
 import net.bielsko.chwileczke.ui.fields.SwitchBox
-import net.bielsko.chwileczke.ui.fields.TextFieldBox
+import net.bielsko.chwileczke.ui.fields.MyTextField
 
 @Composable
 fun MessageScreen() {
@@ -87,20 +80,28 @@ fun MessageScreen() {
 
         if (isAddLinkEnabled.value) {
             // TextField for link text
-            TextFieldBox(
-                title = stringResource(id = R.string.add_link_text_title),
+            MyTextField(
+                labelText = stringResource(id = R.string.add_link_text_title),
                 textState = mutAddLinkText,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+//                value = value,
+                onValueChange = {},
+                readOnly = true,
+                enabled = false
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             // TextField for link URL
-            TextFieldBox(
-                title = stringResource(id = R.string.add_link_url_title),
+            MyTextField(
+                labelText = stringResource(id = R.string.add_link_url_title),
                 textState = mutAddLinkUrl,
                 errorText = stringResource(id = R.string.add_link_url_error),
                 validator = { url -> URLUtil.isValidUrl(url) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+//                value = value,
+                onValueChange = {},
+                readOnly = true,
+                enabled = false
             )
             Spacer(modifier = Modifier.height(8.dp))
 
