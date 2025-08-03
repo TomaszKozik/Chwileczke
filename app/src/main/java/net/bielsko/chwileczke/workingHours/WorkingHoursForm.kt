@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,24 +23,29 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkingHoursForm(
-    state: WorkingHoursState,
+    workingHoursState: WorkingHoursState,
     onChange: (WorkingHoursState) -> Unit
 ) {
-    var opened by remember { mutableStateOf(state.opened) }
-    var wholeDay by remember { mutableStateOf(state.wholeDay) }
-    var from by remember { mutableStateOf(state.from) }
-    var to by remember { mutableStateOf(state.to) }
-    var fromInput = remember { mutableStateOf(from) }
-    var toInput = remember { mutableStateOf(to) }
-
-    val day = stringResource(id = state.day)
     val primaryBlue = colorResource(id = R.color.primary_blue)
+    val dayName = stringResource(id = workingHoursState.day)
+
+    var opened by remember { mutableStateOf(workingHoursState.opened) }
+    var wholeDay by remember { mutableStateOf(workingHoursState.wholeDay) }
+    var fromInput = remember { mutableStateOf(workingHoursState.from) }
+    var toInput = remember { mutableStateOf(workingHoursState.to) }
 
     val isFromValid = isValidTimeFormat(fromInput.value)
     val isToValid = isValidTimeFormat(toInput.value)
     val isOrderValid = if (isFromValid && isToValid) {
         parseTime(fromInput.value)?.isBefore(parseTime(toInput.value)) ?: true
     } else true
+
+    LaunchedEffect(workingHoursState) {
+        if (workingHoursState.opened != opened) opened = workingHoursState.opened
+        if (workingHoursState.wholeDay != wholeDay) wholeDay = workingHoursState.wholeDay
+        if (workingHoursState.from != fromInput.value) fromInput.value = workingHoursState.from
+        if (workingHoursState.to != toInput.value) toInput.value = workingHoursState.to
+    }
 
     Column(
         modifier = Modifier
@@ -60,7 +66,14 @@ fun WorkingHoursForm(
                 checked = opened,
                 onCheckedChange = {
                     opened = it
-                    onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                    onChange(
+                        workingHoursState.copy(
+                            opened = opened,
+                            wholeDay = wholeDay,
+                            from = fromInput.value,
+                            to = toInput.value
+                        )
+                    )
                 },
                 colors = CheckboxDefaults.colors(
                     checkedColor = primaryBlue,
@@ -68,7 +81,7 @@ fun WorkingHoursForm(
                     checkmarkColor = Color.White
                 )
             )
-            Text("$day: ${if (opened) stringResource(R.string.opened) else stringResource(R.string.closed)}")
+            Text("$dayName: ${if (opened) stringResource(R.string.opened) else stringResource(R.string.closed)}")
         }
 
         if (opened) {
@@ -77,7 +90,14 @@ fun WorkingHoursForm(
                     checked = wholeDay,
                     onCheckedChange = {
                         wholeDay = it
-                        onChange(state.copy(opened = opened, wholeDay = wholeDay, from = from, to = to))
+                        onChange(
+                            workingHoursState.copy(
+                                opened = opened,
+                                wholeDay = wholeDay,
+                                from = fromInput.value,
+                                to = toInput.value
+                            )
+                        )
                     },
                     colors = CheckboxDefaults.colors(
                         checkedColor = primaryBlue,
@@ -90,11 +110,13 @@ fun WorkingHoursForm(
                     else stringResource(id = R.string.open_hours)
                 )
             }
-            Row(verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)) {
-                if (!wholeDay) {
+            if (!wholeDay) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
                     MyTextField(
                         labelText = stringResource(id = R.string.from),
                         textState = fromInput,
@@ -107,10 +129,21 @@ fun WorkingHoursForm(
                         modifier = Modifier
                             .weight(1f)
                             .height(80.dp),
-//                        value = value,
-                        onValueChange = {},
-                        readOnly = true,
-                        enabled = false
+                        onValueChange = { newValue ->
+                            fromInput.value = newValue
+                            if (isValidTimeFormat(newValue) && isOrderValid) {
+                                onChange(
+                                    workingHoursState.copy(
+                                        opened = opened,
+                                        wholeDay = wholeDay,
+                                        from = newValue,
+                                        to = toInput.value
+                                    )
+                                )
+                            }
+                        },
+                        readOnly = false,
+                        enabled = true
                     )
                     Text("–", modifier = Modifier.padding(horizontal = 4.dp))
                     MyTextField(
@@ -125,24 +158,27 @@ fun WorkingHoursForm(
                         modifier = Modifier
                             .weight(1f)
                             .height(80.dp),
-//                        value = value,
-                        onValueChange = {},
-                        readOnly = true,
-                        enabled = false
+                        onValueChange = { newValue ->
+                            toInput.value = newValue
+                            if (isValidTimeFormat(newValue) && isOrderValid) {
+                                onChange(
+                                    workingHoursState.copy(
+                                        opened = opened,
+                                        wholeDay = wholeDay,
+                                        from = fromInput.value,
+                                        to = newValue
+                                    )
+                                )
+                            }
+                        },
+                        readOnly = false,
+                        enabled = true
                     )
-
-                    // Aktualizujemy stan tylko jeśli oba czasy są poprawne
-                    if (isFromValid && isToValid && isOrderValid) {
-                        from = fromInput.value
-                        to = toInput.value
-                        onChange(state.copy(opened = opened, wholeDay = false, from = from, to = to))
-                    }
                 }
             }
         }
     }
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun parseTime(time: String): LocalTime? = try {
