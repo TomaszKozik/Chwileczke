@@ -60,7 +60,7 @@ fun MyTextField(
             disabledIndicatorColor = colorResource(id = R.color.gray_text),
             disabledContainerColor = colorResource(id = R.color.white),
             disabledLabelColor = colorResource(id = R.color.gray_text),
-            errorContainerColor = colorResource(id = R.color.error_red),
+            errorContainerColor = colorResource(id = R.color.white),
             disabledTextColor = colorResource(id = R.color.gray_text)
         )
     )
