@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import net.bielsko.chwileczke.R
 
 @Composable
-fun MainView() {
+fun MainScreen() {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf(R.string.tab_messages, R.string.tab_settings)
 

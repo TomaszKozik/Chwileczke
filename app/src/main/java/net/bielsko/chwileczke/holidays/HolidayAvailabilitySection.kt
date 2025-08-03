@@ -52,15 +52,16 @@ fun HolidayAvailabilitySection() {
         hasError = checked && (dateFrom.isBlank() || dateTo.isBlank())
     }
 
+    Header1(stringResource(id = R.string.message_holiday_title))
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Text(
+        stringResource(id = R.string.add_holiday_break_description),
+        color = colorResource(id = R.color.gray_text)
+    )
+
     Column(modifier = Modifier.padding(16.dp)) {
-        Header1(stringResource(id = R.string.message_holiday_title))
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            stringResource(id = R.string.add_holiday_break_description),
-            color = colorResource(id = R.color.gray_text)
-        )
 
         MyCheckbox(
             checked = checked,
