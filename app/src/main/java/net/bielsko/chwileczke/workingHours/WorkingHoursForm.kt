@@ -14,10 +14,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.bielsko.chwileczke.R
-import net.bielsko.chwileczke.helpers.isValidTimeFormat
-import net.bielsko.chwileczke.ui.fields.MyTextField
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import net.bielsko.chwileczke.ui.fields.TimePickerField
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -30,20 +27,21 @@ fun WorkingHoursForm(
 
     var opened by remember { mutableStateOf(workingHoursState.opened) }
     var wholeDay by remember { mutableStateOf(workingHoursState.wholeDay) }
-    val fromInput = remember { mutableStateOf(workingHoursState.from) }
-    val toInput = remember { mutableStateOf(workingHoursState.to) }
+    var fromTime by remember { mutableStateOf(workingHoursState.from) }
+    var toTime by remember { mutableStateOf(workingHoursState.to) }
 
-    val isFromValid = isValidTimeFormat(fromInput.value)
-    val isToValid = isValidTimeFormat(toInput.value)
-    val isOrderValid = if (isFromValid && isToValid) {
-        parseTime(fromInput.value)?.isBefore(parseTime(toInput.value)) ?: true
-    } else true
+    fun timeToMinutes(time: String): Int? = try {
+        val parts = time.split(":")
+        parts[0].toInt() * 60 + parts[1].toInt()
+    } catch (e: Exception) {
+        null
+    }
 
     LaunchedEffect(workingHoursState) {
         if (workingHoursState.opened != opened) opened = workingHoursState.opened
         if (workingHoursState.wholeDay != wholeDay) wholeDay = workingHoursState.wholeDay
-        if (workingHoursState.from != fromInput.value) fromInput.value = workingHoursState.from
-        if (workingHoursState.to != toInput.value) toInput.value = workingHoursState.to
+        if (workingHoursState.from != fromTime) fromTime = workingHoursState.from
+        if (workingHoursState.to != toTime) toTime = workingHoursState.to
     }
 
     Column(
@@ -54,7 +52,7 @@ fun WorkingHoursForm(
                 val lineHeight = size.height * 0.9f
                 drawLine(
                     color = primaryBlue,
-                    start = Offset(0f, 0f),
+                    start = Offset(0f, size.height * 0.1f),
                     end = Offset(0f, lineHeight),
                     strokeWidth = 2.dp.toPx()
                 )
@@ -69,8 +67,8 @@ fun WorkingHoursForm(
                         workingHoursState.copy(
                             opened = opened,
                             wholeDay = wholeDay,
-                            from = fromInput.value,
-                            to = toInput.value
+                            from = fromTime,
+                            to = toTime
                         )
                     )
                 },
@@ -93,8 +91,8 @@ fun WorkingHoursForm(
                             workingHoursState.copy(
                                 opened = opened,
                                 wholeDay = wholeDay,
-                                from = fromInput.value,
-                                to = toInput.value
+                                from = fromTime,
+                                to = toTime
                             )
                         )
                     },
@@ -108,80 +106,65 @@ fun WorkingHoursForm(
                     if (wholeDay) stringResource(id = R.string.whole_day)
                     else stringResource(id = R.string.open_hours)
                 )
-            }
-            if (!wholeDay) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    MyTextField(
-                        labelText = stringResource(id = R.string.from),
-                        textState = fromInput,
-                        errorText = when {
-                            !isFromValid -> stringResource(R.string.error_incorrect_hour)
-                            !isOrderValid -> stringResource(R.string.error_incorrect_order_hour)
-                            else -> null
-                        },
-                        validator = { isValidTimeFormat(it) && isOrderValid },
+
+                if (!wholeDay) {
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    TimePickerField(
+                        label = stringResource(id = R.string.from),
+                        time = fromTime,
+                        minTimeMinutes = null,
+                        maxTimeMinutes = timeToMinutes(toTime),
                         modifier = Modifier
                             .weight(1f)
-                            .height(80.dp),
-                        onValueChange = { newValue ->
-                            fromInput.value = newValue
-                            if (isValidTimeFormat(newValue) && isOrderValid) {
+                            .height(70.dp),
+                        onTimeChange = { newFrom ->
+                            val newFromMinutes = timeToMinutes(newFrom)
+                            val toMinutes = timeToMinutes(toTime)
+                            val orderValid =
+                                if (newFromMinutes != null && toMinutes != null) newFromMinutes < toMinutes else true
+                            fromTime = newFrom
+                            if (orderValid) {
                                 onChange(
                                     workingHoursState.copy(
                                         opened = opened,
                                         wholeDay = wholeDay,
-                                        from = newValue,
-                                        to = toInput.value
+                                        from = newFrom,
+                                        to = toTime
                                     )
                                 )
                             }
-                        },
-                        readOnly = false,
-                        enabled = true
+                        }
                     )
                     Text("–", modifier = Modifier.padding(horizontal = 4.dp))
-                    MyTextField(
-                        labelText = stringResource(id = R.string.to),
-                        textState = toInput,
-                        errorText = when {
-                            !isToValid -> stringResource(R.string.error_incorrect_hour)
-                            !isOrderValid -> stringResource(R.string.error_incorrect_order_hour)
-                            else -> null
-                        },
-                        validator = { isValidTimeFormat(it) && isOrderValid },
+                    TimePickerField(
+                        label = stringResource(id = R.string.to),
+                        time = toTime,
+                        minTimeMinutes = timeToMinutes(fromTime),
+                        maxTimeMinutes = null,
                         modifier = Modifier
                             .weight(1f)
-                            .height(80.dp),
-                        onValueChange = { newValue ->
-                            toInput.value = newValue
-                            if (isValidTimeFormat(newValue) && isOrderValid) {
+                            .height(70.dp),
+                        onTimeChange = { newTo ->
+                            val fromMinutes = timeToMinutes(fromTime)
+                            val newToMinutes = timeToMinutes(newTo)
+                            val orderValid =
+                                if (fromMinutes != null && newToMinutes != null) fromMinutes < newToMinutes else true
+                            toTime = newTo
+                            if (orderValid) {
                                 onChange(
                                     workingHoursState.copy(
                                         opened = opened,
                                         wholeDay = wholeDay,
-                                        from = fromInput.value,
-                                        to = newValue
+                                        from = fromTime,
+                                        to = newTo
                                     )
                                 )
                             }
-                        },
-                        readOnly = false,
-                        enabled = true
+                        }
                     )
                 }
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun parseTime(time: String): LocalTime? = try {
-    LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"))
-} catch (e: Exception) {
-    null
 }
