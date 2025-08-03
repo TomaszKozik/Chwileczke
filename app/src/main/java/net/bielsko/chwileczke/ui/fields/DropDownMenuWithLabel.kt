@@ -10,6 +10,7 @@ import net.bielsko.chwileczke.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuWithLabel(
+    label: String,
     options: List<String>,
     selected: String,
     onSelect: (String) -> Unit
@@ -27,7 +28,7 @@ fun DropdownMenuWithLabel(
             readOnly = true,
             label = {
                 Text(
-                    text = stringResource(id = R.string.choose),
+                    label,
                     color = colorResource(id = R.color.gray_text)
                 )
             },

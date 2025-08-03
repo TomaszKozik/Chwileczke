@@ -4,6 +4,7 @@ import android.webkit.URLUtil
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.bielsko.chwileczke.R
 import net.bielsko.chwileczke.helpers.AddUrlToMessage
+import net.bielsko.chwileczke.ui.fields.Header1
 import net.bielsko.chwileczke.ui.fields.MessageBox
 import net.bielsko.chwileczke.ui.fields.SwitchBox
 import net.bielsko.chwileczke.ui.fields.TextFieldBox
@@ -41,7 +43,6 @@ fun MessageScreen() {
     val mutAddLinkText = remember { mutableStateOf(addLinkTextDefault) }
     val mutAddLinkUrl = remember { mutableStateOf(addLinkUrl) }
     val isAddLinkEnabled = remember { mutableStateOf(false) }
-    var isHolidayBreakButtonClicked by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -71,43 +72,6 @@ fun MessageScreen() {
             description = stringResource(id = R.string.message_holiday_description),
             textState = mutHolidayMessage
         )
-        // Holiday break message
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (!isHolidayBreakButtonClicked) {
-            Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.primary_blue),
-                    contentColor = colorResource(id = R.color.white)
-                ),
-                onClick = { isHolidayBreakButtonClicked = true }) {
-                Text(
-                    stringResource(id = R.string.add_holiday_break_button),
-                    color = Color.White
-                )
-            }
-        } else {
-            Text(
-                "Zakres dat i godzin do wyboru (TODO: data picker)",
-                color = colorResource(id = R.color.gray_text)
-            )
-            Text(
-                stringResource(id = R.string.add_holiday_break_description),
-                color = colorResource(id = R.color.gray_text)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.primary_blue),
-                    contentColor = colorResource(id = R.color.white)
-                ),
-                onClick = { isHolidayBreakButtonClicked = false }) {
-                Text(
-                    stringResource(id = R.string.remove_holiday_break),
-                    color = Color.White
-                )
-            }
-        }
         Spacer(modifier = Modifier.height(16.dp))
 
         // Link do wiadomości
@@ -125,7 +89,8 @@ fun MessageScreen() {
             // TextField for link text
             TextFieldBox(
                 title = stringResource(id = R.string.add_link_text_title),
-                textState = mutAddLinkText
+                textState = mutAddLinkText,
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -134,7 +99,8 @@ fun MessageScreen() {
                 title = stringResource(id = R.string.add_link_url_title),
                 textState = mutAddLinkUrl,
                 errorText = stringResource(id = R.string.add_link_url_error),
-                validator = { url -> URLUtil.isValidUrl(url) }
+                validator = { url -> URLUtil.isValidUrl(url) },
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
 

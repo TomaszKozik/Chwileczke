@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Chwileczkę</string>
     <string name="logo">Logo %s</string>
-    <string name="tab_messages">Wiadomości</string>
+    <string name="tab_messages">Odpowiedzi SMS</string>
     <string name="tab_settings">Ustawienia</string>
     <string name="message_in_work_title">Gdy pracuję</string>
     <string name="message_in_work_description">Wiadomość wysyłana, gdy nie można się skontaktować w trakcie Twojej pracy</string>
@@ -9,7 +9,9 @@
     <string name="message_out_of_work_title">Po pracy</string>
     <string name="message_out_of_work_description">Wiadomość wysyłana, gdy nie można się skontaktować po za godzinami Twojej pracy</string>
     <string name="message_out_of_work_default_text">"Witam! Dziękuję za kontakt! Bardzo proszę o telefon w godzinach mojej pracy. Pozdrawiam 1%s"</string>
-    <string name="message_holiday_title">Urlop, szkolenie</string>
+    <string name="message_holiday_title">Przerwa w pracy</string>
+    <string name="no_holiday">Brak przerwy, urlopu, szkolenia</string>
+    <string name="planned_holiday">Zaplanowano przerwę, urlop lub szkolenie na:</string>
     <string name="message_holiday_description">Wiadomość wysyłana, gdy nie można się skontaktować w trakcie urlopu lub szkolenia. </string>
     <string name="message_holiday_default_text">"Witam! Dziękuję za kontakt! Obecnie przebywam na urlopie do dnia 1%d. Bardzo proszę o kontakt po tej dacie."</string>
     <string name="add_holiday_break_button">Dodaj przerwę w pracy</string>
@@ -36,6 +38,11 @@
     <string name="closed">zamknięte</string>
     <string name="from">od</string>
     <string name="to">do</string>
+    <string name="start_hour">8:00</string>
+    <string name="end_hour">16:00</string>
+    <string name="error_incorrect_hour">Niepoprawna godzina</string>
+    <string name="error_incorrect_order_hour">Zła kolejność godzin</string>
+    <string name="weekly_summary">Podsumowanie tygodnia:</string>
     <string name="messages_for">Wiadomości dla</string>
     <string name="not_answered">Nieodebrane połączenie</string>
     <string name="not_read">Nieodczytana wiadomość</string>
@@ -43,5 +50,4 @@
     <string name="noname_contact">Nieznany kontakt</string>
     <string name="name_contact">Znany kontakt</string>
     <string name="choose">Wybierz</string>
-
 </resources>

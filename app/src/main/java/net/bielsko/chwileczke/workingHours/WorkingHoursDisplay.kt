@@ -1,0 +1,53 @@
+package net.bielsko.chwileczke.workingHours
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import net.bielsko.chwileczke.R
+import net.bielsko.chwileczke.ui.fields.Header1
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun WorkingHoursDisplay() {
+    val days = listOf(
+        R.string.monday,
+        R.string.tuesday,
+        R.string.wednesday,
+        R.string.thursday,
+        R.string.friday,
+        R.string.saturday,
+        R.string.sunday
+    )
+
+    val schedule = remember {
+        mutableStateListOf<WorkingHoursState>().apply {
+            days.forEach { day ->
+                add(WorkingHoursState(day = day, opened = true))
+            }
+        }
+    }
+
+    Header1(stringResource(id = R.string.working_hours))
+
+    schedule.forEachIndexed { index, state ->
+        WorkingHoursForm(
+            state = state,
+            onChange = { updated -> schedule[index] = updated }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
+    DailyState(schedule)
+    WeeklySummary(schedule)
+}

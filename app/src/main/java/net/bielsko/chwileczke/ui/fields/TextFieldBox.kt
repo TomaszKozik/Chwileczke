@@ -1,6 +1,5 @@
 package net.bielsko.chwileczke.ui.fields
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -15,7 +14,8 @@ fun TextFieldBox(
     title: String,
     textState: MutableState<String>,
     errorText: String? = null,
-    validator: (String) -> Boolean = { true }
+    validator: (String) -> Boolean = { true },
+    modifier: Modifier
 ) {
     val isError = !validator(textState.value)
     OutlinedTextField(
@@ -28,7 +28,7 @@ fun TextFieldBox(
             )
         },
         singleLine = true,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         isError = isError,
         supportingText = {
             if (isError && errorText != null) {
