@@ -3,27 +3,33 @@
     <string name="logo">Logo %s</string>
     <string name="tab_messages">Odpowiedzi SMS</string>
     <string name="tab_settings">Ustawienia</string>
-    <string name="message_in_work_title">Gdy pracuję</string>
-    <string name="message_in_work_description">Wiadomość wysyłana, gdy nie można się skontaktować w trakcie Twojej pracy</string>
-    <string name="message_in_work_default_text">"Witam! Dziękuję za kontakt! W tej chwili nie mogę rozmawiać. Oddzwonię możliwie szybko!"</string>
-    <string name="message_out_of_work_title">Po pracy</string>
-    <string name="message_out_of_work_description">Wiadomość wysyłana, gdy nie można się skontaktować po za godzinami Twojej pracy</string>
-    <string name="message_out_of_work_default_text">"Witam! Dziękuję za kontakt! Bardzo proszę o telefon w godzinach mojej pracy. Pozdrawiam 1%s"</string>
-    <string name="message_holiday_title">Przerwa w pracy</string>
-    <string name="no_holiday">Brak przerwy, urlopu, szkolenia</string>
-    <string name="planned_holiday">Zaplanowano przerwę, urlop lub szkolenie na:</string>
-    <string name="message_holiday_description">Wiadomość wysyłana, gdy nie można się skontaktować w trakcie urlopu lub szkolenia. </string>
-    <string name="message_holiday_default_text">"Witam! Dziękuję za kontakt! Obecnie przebywam na urlopie do dnia 1%d. Bardzo proszę o kontakt po tej dacie."</string>
+
+    <string name="message_in_work_title">Podczas pracy</string>
+    <string name="message_in_work_description">Wiadomość wysyłana, gdy nie możesz odebrać telefonu podczas pracy</string>
+    <string name="message_in_work_default_text">Witam! Dziękuję za kontakt. W tej chwili nie mogę rozmawiać. Oddzwonię najszybciej, jak to możliwe.</string>
+
+    <string name="message_out_of_work_title">Po godzinach pracy</string>
+    <string name="message_out_of_work_description">Wiadomość wysyłana, gdy nie możesz odebrać telefonu poza godzinami pracy</string>
+    <string name="message_out_of_work_default_text">"Witam! Dziękuję za wiadomość. Proszę o kontakt w godzinach mojej pracy. Pozdrawiam serdecznie!\n\nGodziny pracy:%1$s"</string>
+
+    <string name="message_holiday_title">Urlop / Przerwa</string>
+    <string name="no_holiday">Brak zaplanowanego urlopu ani przerwy</string>
+    <string name="planned_holiday">Zaplanowany urlop/przerwa od:</string>
+    <string name="message_holiday_description">Wiadomość wysyłana podczas urlopu, szkolenia lub przerwy</string>
+    <string name="message_holiday_default_text">"Witam! Dziękuję za kontakt. Obecnie przebywam na urlopie do dnia %1$s. Proszę o kontakt po tym terminie."</string>
+
     <string name="add_holiday_break_button">Dodaj przerwę w pracy</string>
-    <string name="add_holiday_break_description">Aplikacja w trakcie urlopu, szkolenia wysyła tylko wiadomości dla niego. Wiadomości z pól "Gdy pracuję" oraz "Po pracy" są pomijane.</string>
+    <string name="add_holiday_break_description">>W trakcie urlopu lub szkolenia wysyłane są tylko wiadomości dotyczące przerwy. Wiadomości "Podczas pracy" i "Po godzinach" są pomijane.</string>
     <string name="remove_holiday_break">Usuń przerwę w pracy</string>
-    <string name="add_link_title">Link do wiadomości</string>
-    <string name="add_link_button_description">"Włączenie tej opcji spowoduje, że będzie dołączany link do Twojej strony lub systemu rezerwacji na końcu każdej wiadomości</string>
+
+    <string name="add_link_title">Dołącz link do wiadomości</string>
+    <string name="add_link_button_description">Włączenie tej opcji spowoduje dołączenie linku do Twojej strony lub systemu rezerwacji na końcu każdej wiadomości.</string>
     <string name="add_link_text_title">Informacja o linku</string>
     <string name="add_link_text_default">Zapraszam również do rezerwacji usług poprzez link:</string>
     <string name="add_link_url_title">Adres do strony lub systemu rezerwacji</string>
-    <string name="add_link_url_error">Wprowadź poprawny link</string>
+    <string name="add_link_url_error">Wprowadź poprawny adres URL</string>
     <string name="add_link_url_default">https://</string>
+
     <string name="working_hours">Godziny pracy</string>
     <string name="monday">Poniedziałek</string>
     <string name="tuesday">Wtorek</string>
@@ -40,8 +46,10 @@
     <string name="to">do</string>
     <string name="start_hour">8:00</string>
     <string name="end_hour">16:00</string>
+
     <string name="error_incorrect_hour">Niepoprawna godzina</string>
     <string name="error_incorrect_order_hour">Zła kolejność godzin</string>
+
     <string name="weekly_summary">Podsumowanie tygodnia:</string>
     <string name="messages_for">Wiadomości dla</string>
     <string name="not_answered">Nieodebrane połączenie</string>
@@ -50,6 +58,6 @@
     <string name="noname_contact">Nieznany kontakt</string>
     <string name="name_contact">Znany kontakt</string>
     <string name="choose">Wybierz</string>
-    <string name="error_fill_dates">Uzupełnij obie daty, aby funkcja działała!</string>
+    <string name="error_fill_dates">Proszę uzupełnić obie daty, aby funkcja działała poprawnie!</string>
     <string name="triggers">Wyzwalacze wysyłki SMS</string>
 </resources>
