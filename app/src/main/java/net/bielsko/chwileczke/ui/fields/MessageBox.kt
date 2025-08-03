@@ -10,7 +10,8 @@ import net.bielsko.chwileczke.R
 fun MessageBox(
     title: String,
     description: String,
-    textState: MutableState<String>
+    textState: MutableState<String>,
+    onTextChanged: (String) -> Unit = {}
 ) {
     MultiLineTextField(
         value = textState.value,
@@ -26,6 +27,9 @@ fun MessageBox(
                 color = colorResource(id = R.color.gray_text)
             )
         },
-        onValueChange = { textState.value = it }
+        onValueChange = {
+            textState.value = it
+            onTextChanged(it)
+        }
     )
 }

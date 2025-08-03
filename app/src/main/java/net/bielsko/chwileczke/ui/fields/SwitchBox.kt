@@ -19,7 +19,8 @@ import net.bielsko.chwileczke.R
 @Composable
 fun SwitchBox(
     description: String,
-    switchState: MutableState<Boolean>
+    switchState: MutableState<Boolean>,
+    onCheckedChange: (Boolean) -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -28,12 +29,16 @@ fun SwitchBox(
     ) {
         Switch(
             checked = switchState.value,
-            onCheckedChange = { switchState.value = it },
+            onCheckedChange = {
+                switchState.value = it
+                onCheckedChange(it)
+            },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = colorResource(id = R.color.link_blue),
                 uncheckedThumbColor = colorResource(id = R.color.gray_text),
                 checkedTrackColor = colorResource(id = R.color.primary_blue),
-                uncheckedTrackColor = colorResource(id = R.color.white))
+                uncheckedTrackColor = colorResource(id = R.color.white)
+            )
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
